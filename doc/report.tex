@@ -1,0 +1,61 @@
+\documentclass[11pt]{article}
+\renewcommand{\baselinestretch}{1.05}
+\usepackage{amsmath,amsthm,verbatim,amssymb,amsfonts,amscd, graphicx}
+\usepackage{datetime}
+\usepackage{dsfont}
+\usepackage{subfigure}
+\usepackage{url}
+\usepackage{xspace}
+\usepackage{graphics}
+\usepackage{todonotes}
+
+
+% define page format
+\topmargin0.0cm
+\headheight0.0cm
+\headsep0.0cm
+\oddsidemargin0.0cm
+\textheight23.0cm
+\textwidth16.5cm
+\footskip1.0cm
+
+% note and comment
+\newcommand{\note}[1]{\textbf{\textcolor{red}{\{#1\}}}}
+
+\theoremstyle{plain}
+
+% something relate to math
+% theory
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}{Corollary}
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
+\newtheorem*{surfacecor}{Corollary 1}
+\newtheorem{conjecture}{Conjecture}
+\newtheorem{question}{Question}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+% symbol
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+% start the document
+\begin{document}
+
+\title{DBLP Development Report}
+\date{\today}
+\author{Tao Lin}
+\maketitle
+
+\section{}
+
+
+% \begin{figure}[!htp] \label{fig:malacards_totalgene_powerlaw}
+% \subfigure{\includegraphics[width=0.5\textwidth,height=0.25\textheight]{figures/malacards_total_powerlaw1}}
+% \subfigure{\includegraphics[width=0.5\textwidth,height=0.25\textheight]{figures/malacards_total_powerlaw2}}
+% \caption{Power law in Malacards Total Gene List}
+% \end{figure}
+
+\bibliographystyle{abbrv}
+\bibliography{mybib}
+
+\end{document}
