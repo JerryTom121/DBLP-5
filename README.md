@@ -1,10 +1,16 @@
-# Using/Crawl the Data of DBLP for Knowledge Discovery
+# Using/Crawl the Data for Scholar Knowledge Discovery
+
+The data can comes from DBLP, google scholar, etc.
 
 ## Roadmap
 ### Data Collection
-* TODO
-* TODO
-* TODO
+#### API
+* crawl a given author's personal information.
+* crawl a given author's publications.
+* crawl a given author's co-author information.
+* crawl the publications for a given conference/journal.
+
+#### Pipeline.
 * TODO
 
 ### Feature Extraction
