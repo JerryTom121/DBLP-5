@@ -11,14 +11,14 @@ from utils import parameters as params
 class CoAuthor(LazyAPIData):
 
     """
-    Represents a DBLP author. All data but the author's key is lazily loaded.
+    Represents the coauthor information of a DBLP author.
+    All data but the author's key is lazily loaded.
     Fields that aren't provided by the underlying XML are None.
 
     Attributes:
-    name - the author's primary name record
-    publications - a list of lazy-loaded Publications results by this author
-    homepages - a list of author homepage URLs
-    homonyms - a list of author aliases
+    author - the author's information, e.g., urlpt, author
+    coauthor information - the coauthor information for a given author,
+    it will return {coauthor name: {urlpt, count}}.
     """
 
     def __init__(self, urlpt):

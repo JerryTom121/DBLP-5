@@ -11,6 +11,11 @@ from logger import Logger
 log = Logger.get_logger("utils")
 
 
+def name_without_extension(path):
+    """get the file name without extension."""
+    return os.path.splitext(path)[0]
+
+
 def read_txt(path):
     """read text file from path."""
     with open(path, "r") as f:

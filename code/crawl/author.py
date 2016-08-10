@@ -36,6 +36,7 @@ class Author(LazyAPIData):
         xml = resp.content
         self.xml = xml
         root = etree.fromstring(xml)
+        # print(etree.tostring(root, pretty_print=True))
         data = {
             'name': root.attrib['name'],
             'publications': [

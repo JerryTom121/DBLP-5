@@ -1,2 +1,3 @@
 find . -name "*.pyc" -delete
-python crawlerAPI.py -m 2
+# python crawlerAPI.py -m 1
+python crawlerAPI.py -m 3
