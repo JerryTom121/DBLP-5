@@ -47,7 +47,7 @@ class Publication(LazyAPIData):
 
     def load_data(self):
         """fill in the function of load data."""
-        resp = requests.get(params.DBLP_PUBLICATION_URL.format(key=self.key))
+        resp = requests.get(params.DBLP_RECORDS_URL.format(key=self.key))
         xml = resp.content
         self.xml = xml
         root = etree.fromstring(xml)
