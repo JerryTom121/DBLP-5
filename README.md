@@ -1,6 +1,4 @@
-## Using/Crawl the Data of DBLP for Knowledge Discovery
-
----
+# Using/Crawl the Data of DBLP for Knowledge Discovery
 
 ## Roadmap
 ### Data Collection
