@@ -1,6 +1,6 @@
 # Using/Crawl the Data for Scholar Knowledge Discovery
 
-The data can comes from DBLP, google scholar, etc.
+The data comes from DBLP, google scholar, etc.
 
 ## Roadmap
 ### Data Collection
@@ -8,7 +8,7 @@ The data can comes from DBLP, google scholar, etc.
 * crawl a given author's personal information.
 * crawl a given author's publications.
 * crawl a given author's co-author information.
-* crawl the publications for a given conference/journal.
+* crawl the list of publications of a conference/journal.
 
 #### Pipeline.
 * TODO
