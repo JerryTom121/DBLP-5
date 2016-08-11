@@ -5,8 +5,10 @@ MAINTAINER Tao Lin <itamtao@gmail.com>
 # install packages
 RUN pip install scrapy
 
-RUN pip install --no-cache-dir pyquery \
-     						beautifulsoup4
+RUN pip install --no-cache-dir pyquery
+RUN pip install --no-cache-dir beautifulsoup4
+RUN pip install --no-cache-dir requests
+
 
 # switch user
 USER tlin

@@ -28,6 +28,12 @@ def read_json(path):
         return json.load(f)
 
 
+def write_to_txt(data, out_path, type="w"):
+    """write the data to the txt file."""
+    with open(out_path, type) as f:
+        f.write(data.encode("utf-8"))
+
+
 def build_result_folder(timestamp=str(int(time.time()))):
     """build folder for the running result."""
     out_path = os.path.abspath(os.path.join(os.path.curdir, "runs", timestamp))

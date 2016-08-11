@@ -25,6 +25,7 @@
 *.log
 *.sql
 *.sqlite
+*/db*
 
 # OS generated files #
 ######################
@@ -47,11 +48,11 @@ Thumbs.db
 *.synctex.gz
 *.dvi
 
-# ref file #
+# related files #
 ######################
 ref/*
 runs/*
-
+*downloaded
 
 # python file #
 ######################

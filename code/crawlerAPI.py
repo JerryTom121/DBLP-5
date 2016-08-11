@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""A entry for different functions of the crawler."""
+"""A API entry for different functions of the crawler."""
 
 import requests
 from lxml import etree
@@ -8,16 +8,14 @@ from optparse import OptionParser
 from crawl import Author
 from crawl import CoAuthor
 from crawl import Venues
+from crawl import Publication
 from utils import Logger
 from utils import parameters as params
-from utils import opfiles as op
 
 
-def parsing_author(o, log):
-    """parsing an author's information in DBLP."""
+def crawl_author_assist(resp):
+    """an assistant function to help the function 'crawl_author'."""
     parsed = []
-    resp = requests.get(params.DBLP_AUTHOR_SEARCH_URL,
-                        params={'xauthor': o.author})
     root = etree.fromstring(resp.content)
     # print(etree.tostring(root, pretty_print=True))
     for urlpt in root.xpath('/authors/author/@urlpt'):
@@ -25,22 +23,32 @@ def parsing_author(o, log):
     return parsed
 
 
-def parsing_coauthor(o, log):
-    """parsing an author's coauthor information in DBLP."""
-    parsed = []
+def crawl_author(o, log):
+    """get an author's information in DBLP."""
     resp = requests.get(params.DBLP_AUTHOR_SEARCH_URL,
                         params={'xauthor': o.author})
+    return crawl_author_assist(resp)
+
+
+def crawl_coauthor_assist(resp):
+    """an assistant function to help the function 'crawl_coauthor'."""
+    parsed = []
     root = etree.fromstring(resp.content)
     for urlpt in root.xpath('/authors/author/@urlpt'):
         parsed.append(CoAuthor(urlpt))
     return parsed
 
 
-def parsing_venues(o, log):
-    """parsing the information of a venue (conference/journal) in DBLP."""
+def crawl_coauthor(o, log):
+    """get an author's coauthor information in DBLP."""
+    resp = requests.get(params.DBLP_AUTHOR_SEARCH_URL,
+                        params={'xauthor': o.author})
+    return crawl_coauthor_assist(resp)
+
+
+def crawl_venues_assist(resp, log):
+    """an assistant function to help the function 'crawl_venues'."""
     parsed = []
-    resp = requests.get(params.DBLP_VENUES_SEARCH_URL,
-                        params={'q': o.venues})
     root = etree.fromstring(resp.content)
     venues = [{x.tag: x.text for x in hit.xpath('//info/*')}
               for hit in root.xpath('//result/hits/hit')]
@@ -49,8 +57,19 @@ def parsing_venues(o, log):
     for venue in venues:
         log.info("processing {v}".format(v=venue['venue']))
         parsed.append(Venues(venue))
-    print_parsed_publications(parsed)
     return parsed
+
+
+def crawl_venues(o, log):
+    """get the information of a venue (conference/journal) in DBLP."""
+    resp = requests.get(params.DBLP_VENUES_SEARCH_URL,
+                        params={'q': o.venues})
+    return crawl_venues_assist(resp, log)
+
+
+def crawl_publication(o, log):
+    """get the bibtex information for a publication."""
+    return Publication(o.publ_key)
 
 
 def print_parsed_author(parsed):
@@ -58,6 +77,7 @@ def print_parsed_author(parsed):
     try:
         for p in parsed:
             print "\nName:", p.name
+            print "urlpt:", p.urlpt
             print "Number of Publication:", len(p.publications)
             print "Home Page:", p.homepages
             print "One of the Publications:", p.publications[0].title
@@ -75,7 +95,7 @@ def print_parsed_coauthor(parsed):
         print "No results and cannot be printed out."
 
 
-def print_parsed_publications(parsed):
+def print_parsed_venues(parsed):
     """print the paper of a given conference/journal."""
     try:
         for p in parsed:
@@ -88,25 +108,41 @@ def print_parsed_publications(parsed):
         print "No results and cannot be printed out."
 
 
+def print_parsed_publication(parsed):
+    """print the bib information of a given publication."""
+    try:
+            print "publications (title):", parsed.title
+            print "publications (year):", parsed.year
+            print "publications (url):", parsed.url
+    except:
+        print "No results and cannot be printed out."
+
+
 def parsing(o):
     """parsing the command from terminal input."""
     # initialize the logger
-    log = Logger.get_logger('DBLP Crawler')
+    log = Logger.get_logger('DBLP_Crawler_API')
     log.info("START THE CRAWLER...")
 
     if option.mode == 1:
         log.info("searching author: {a}".format(a=o.author))
-        parsed = parsing_author(o, log)
+        parsed = crawl_author(o, log)
         print_parsed_author(parsed)
     elif option.mode == 2:
         log.info("searching the coauthor information of author: {a}".format(
             a=o.author))
-        parsed = parsing_coauthor(o, log)
+        parsed = crawl_coauthor(o, log)
         print_parsed_coauthor(parsed)
     elif option.mode == 3:
         log.info("searching the paper of venue: {a}".format(
                  a=o.venues))
-        parsed = parsing_venues(o, log)
+        parsed = crawl_venues(o, log)
+        print_parsed_venues(parsed)
+    elif option.mode == 4:
+        log.info("searching the bib information of the: {a}".format(
+                 a=o.publ_key))
+        parsed = crawl_publication(o, log)
+        print_parsed_publication(parsed)
     return parsed
 
 if __name__ == '__main__':
@@ -134,7 +170,13 @@ if __name__ == '__main__':
                       dest="venues",
                       default="icml$",
                       type="string",
-                      help="the conference/journal to search")
+                      help="get a complete publications of conference/journal")
+    parser.add_option("-p",
+                      "--publication",
+                      dest="publ_key",
+                      default="conf/icml/BuloPK16",
+                      type="string",
+                      help="search the bib information of a publication")
     parser.add_option('-o',
                       '--output',
                       dest='output',
@@ -151,10 +193,4 @@ if __name__ == '__main__':
 
     # parsing
     parsed = parsing(option)
-
-    if option.output:
-        print "output the crawled data to the current..."
-        folder = op.build_result_folder("1470822006")
-        print "done!"
-    else:
-        print "\nThe number of results is: {n}\n".format(n=len(parsed))
+    print "\nThe number of results is: {n}\n".format(n=len(parsed))

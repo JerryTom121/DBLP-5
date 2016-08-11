@@ -11,4 +11,10 @@ DBLP_PERSON_URL = DBLP_BASE_URL + 'pers/xk/{urlpt}'
 DBLP_COAUTHORS_URL = DBLP_BASE_URL + 'pers/xc/{urlpt}'
 DBLP_RECORDS_URL = DBLP_BASE_URL + 'rec/bibtex/{key}.xml'
 
-DOWNLOAD_DELAY = 10
+
+DOWNLOAD_DELAY = 6
+DATABASE_LOCATION = "mongodb"
+DATABASE_PORT = 27017
+
+# normally it should be False otherwise we will lose information
+DATABASE_MODE = False

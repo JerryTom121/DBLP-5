@@ -66,9 +66,7 @@ class Venues(LazyAPIData):
         for url in venue_urls:
             publications_urls += self.crawl_publication(url)
             time_to_sleep = auxi.random_sleep()
-            # self.info.debug("sleep {s}".format(s=time_to_sleep))
             time.sleep(time_to_sleep)
-            break
         return publications_urls
 
     def load_data(self):
