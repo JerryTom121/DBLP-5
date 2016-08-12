@@ -28,7 +28,6 @@ class Venues(LazyAPIData):
 
     def __init__(self, venue):
         """initialization."""
-        self.log = Logger.get_logger("venues")
         self.venue_name = venue['venue']
         self.venue_url = venue['url']
         self.acronym = venue['acronym']
@@ -37,7 +36,7 @@ class Venues(LazyAPIData):
 
     def crawl_more_venue_urls(self):
         """using the venue url to get the exact/detailed urls."""
-        self.log.info("using a venue url to get more detailed venue urls.")
+        print("using a venue url to get more detailed venue urls.")
         url_basename = basename(self.venue_url)
         resp = requests.get(self.venue_url)
         html = BS(resp.content, 'lxml')
@@ -52,8 +51,7 @@ class Venues(LazyAPIData):
 
     def crawl_publication(self, url):
         """crawl the key information for a single publication."""
-        self.log.debug("get the key information of {k}.".format(
-                       k=url))
+        print("get the key information of {k}.".format(k=url))
         resp = requests.get(url)
         html = BS(resp.content, 'lxml')
         html_data = html.findAll("li", {"class": "entry"})
@@ -62,7 +60,7 @@ class Venues(LazyAPIData):
 
     def crawl_publications(self, venue_urls):
         """crawl the key information for a list of publications."""
-        self.log.info("get the publications' key information.")
+        print("get the publications' key information.")
         publications_urls = []
         for url in venue_urls:
             publications_urls += self.crawl_publication(url)
