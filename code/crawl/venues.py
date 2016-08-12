@@ -46,7 +46,8 @@ class Venues(LazyAPIData):
         for data in html_data:
             urls += [x['href']
                      for x in data.findAll(href=True)
-                     if url_basename in x['href']]
+                     if url_basename in x['href'] and
+                     url_basename + "/" + url_basename in x['href']]
         return urls
 
     def crawl_publication(self, url):

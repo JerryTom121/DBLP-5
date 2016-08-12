@@ -46,14 +46,16 @@ def crawl_coauthor(o, log):
     return crawl_coauthor_assist(resp)
 
 
-def crawl_venues_assist(resp, log):
+def crawl_venues_assist(resp, venue, log):
     """an assistant function to help the function 'crawl_venues'."""
     parsed = []
     root = etree.fromstring(resp.content)
-    venues = [{x.tag: x.text for x in hit.xpath('//info/*')}
+    # print(etree.tostring(root, pretty_print=True))
+    venues = [{x.tag: x.text for x in hit.xpath('info/*')}
               for hit in root.xpath('//result/hits/hit')]
-    if len(venues) > 4:
-        log.warning("there are more than 1 venue.")
+    venues = [v for v in venues
+              if v.get("acronym", "").lower() == venue.lower()]
+    log.debug("retrieved venues: {v}".format(v=venues))
     for venue in venues:
         log.info("processing {v}".format(v=venue['venue']))
         parsed.append(Venues(venue))
@@ -63,8 +65,8 @@ def crawl_venues_assist(resp, log):
 def crawl_venues(o, log):
     """get the information of a venue (conference/journal) in DBLP."""
     resp = requests.get(params.DBLP_VENUES_SEARCH_URL,
-                        params={'q': o.venues})
-    return crawl_venues_assist(resp, log)
+                        params={'q': o.venue})
+    return crawl_venues_assist(resp, o.venue, log)
 
 
 def crawl_publication(o, log):
@@ -135,7 +137,7 @@ def parsing(o):
         print_parsed_coauthor(parsed)
     elif option.mode == 3:
         log.info("searching the paper of venue: {a}".format(
-                 a=o.venues))
+                 a=o.venue))
         parsed = crawl_venues(o, log)
         print_parsed_venues(parsed)
     elif option.mode == 4:
@@ -166,9 +168,9 @@ if __name__ == '__main__':
                       type="string",
                       help="the person to search")
     parser.add_option("-v",
-                      "--venues",
-                      dest="venues",
-                      default="icml$",
+                      "--venue",
+                      dest="venue",
+                      default="nips",
                       type="string",
                       help="get a complete publications of conference/journal")
     parser.add_option("-p",

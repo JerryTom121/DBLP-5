@@ -23,7 +23,7 @@ def crawl_venues(venue, log):
     """crawl the publications of venue."""
     resp = requests.get(params.DBLP_VENUES_SEARCH_URL,
                         params={'q': venue})
-    return api.crawl_venues_assist(resp, log)
+    return api.crawl_venues_assist(resp, venue, log)
 
 
 def insert_to_db(data, db, log):
@@ -39,9 +39,13 @@ def parsing_crawled_publications(crawled, db, log, path_record):
     """parsing the crawled publications."""
     for c in crawled:
         print("parsing {n}, its url={u}".format(n=c.venue_name,
-                 u=c.venue_url))
+              u=c.venue_url))
         total_publications = len(c.publications)
         for ind, publication in enumerate(c.publications):
+            if db.find({"key": publication.key}).count() > 0:
+                op.write_to_txt(publication.key + "\tExisted.\n",
+                                path_record, "a")
+                continue
             if len(publication.authors) == 0:
                 continue
             data = {
@@ -56,7 +60,7 @@ def parsing_crawled_publications(crawled, db, log, path_record):
                 "authors": publication.authors
             }
             insert_to_db(data, db, log)
-            op.write_to_txt(publication.key + "\tT\n", path_record, "a")
+            op.write_to_txt(publication.key + "\tAdded.\n", path_record, "a")
             if ind % 50 == 0:
                 print("parsed {i} publications, existing {t}".format(
                          i=ind, t=total_publications))
@@ -80,7 +84,7 @@ def start_crawler(path_code):
     venues_to_crawl = read_list_to_download(path_list_to_crawl)
     # start the crawler
     for venue in venues_to_crawl:
-        venue = venue.strip() + "$"
+        venue = venue.strip()
         log.info("crawl the venue named {v}".format(v=venue))
         crawled = crawl_venues(venue, log)
         parsing_crawled_publications(crawled, publications, log,

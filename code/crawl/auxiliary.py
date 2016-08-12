@@ -26,4 +26,4 @@ def get_fullname(o):
 
 def random_sleep():
     """decide a random time to sleep."""
-    return random.uniform(2, params.DOWNLOAD_DELAY)
+    return random.uniform(1, params.DOWNLOAD_DELAY)

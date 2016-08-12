@@ -52,37 +52,41 @@ class Publication(LazyAPIData):
         self.xml = xml
         root = etree.fromstring(xml)
         publication = auxi.first_or_none(root.xpath('/dblp/*[1]'))
-        if publication is None:
-            raise ValueError
-        data = {
-            'type': publication.tag,
-            'sub_type': publication.attrib.get('publtype', None),
-            'mdate': publication.attrib.get('mdate', None),
-            'authors': publication.xpath('author/text()'),
-            'editors': publication.xpath('editor/text()'),
-            'title': auxi.first_or_none(publication.xpath('title/text()')),
-            'year': int(auxi.first_or_none(publication.xpath('year/text()'))),
-            'month': auxi.first_or_none(publication.xpath('month/text()')),
-            'journal': auxi.first_or_none(publication.xpath('journal/text()')),
-            'volume': auxi.first_or_none(publication.xpath('volume/text()')),
-            'number': auxi.first_or_none(publication.xpath('number/text()')),
-            'chapter': auxi.first_or_none(publication.xpath('chapter/text()')),
-            'pages': auxi.first_or_none(publication.xpath('pages/text()')),
-            'ee': auxi.first_or_none(publication.xpath('ee/text()')),
-            'isbn': auxi.first_or_none(publication.xpath('isbn/text()')),
-            'url': auxi.first_or_none(publication.xpath('url/text()')),
-            'booktitle': auxi.first_or_none(
-                publication.xpath('booktitle/text()')),
-            'crossref': auxi.first_or_none(
-                publication.xpath('crossref/text()')),
-            'publisher': auxi.first_or_none(
-                publication.xpath('publisher/text()')),
-            'school': auxi.first_or_none(publication.xpath('school/text()')),
-            'citations': [
-                auxi.Citation(c.text, c.attrib.get('label', None))
-                for c in publication.xpath('cite') if c.text != '...'],
-            'series': auxi.first_or_none(
-                auxi.Series(s.text, s.attrib.get('href', None))
-                for s in publication.xpath('series'))
-        }
-        self.data = data
+        if publication is not None:
+            data = {
+                'type': publication.tag,
+                'sub_type': publication.attrib.get('publtype', None),
+                'mdate': publication.attrib.get('mdate', None),
+                'authors': publication.xpath('author/text()'),
+                'editors': publication.xpath('editor/text()'),
+                'title': auxi.first_or_none(publication.xpath('title/text()')),
+                'year': auxi.first_or_none(publication.xpath('year/text()')),
+                'month': auxi.first_or_none(publication.xpath('month/text()')),
+                'journal': auxi.first_or_none(
+                    publication.xpath('journal/text()')),
+                'volume': auxi.first_or_none(
+                    publication.xpath('volume/text()')),
+                'number': auxi.first_or_none(
+                    publication.xpath('number/text()')),
+                'chapter': auxi.first_or_none(
+                    publication.xpath('chapter/text()')),
+                'pages': auxi.first_or_none(publication.xpath('pages/text()')),
+                'ee': auxi.first_or_none(publication.xpath('ee/text()')),
+                'isbn': auxi.first_or_none(publication.xpath('isbn/text()')),
+                'url': auxi.first_or_none(publication.xpath('url/text()')),
+                'booktitle': auxi.first_or_none(
+                    publication.xpath('booktitle/text()')),
+                'crossref': auxi.first_or_none(
+                    publication.xpath('crossref/text()')),
+                'publisher': auxi.first_or_none(
+                    publication.xpath('publisher/text()')),
+                'school': auxi.first_or_none(
+                    publication.xpath('school/text()')),
+                'citations': [
+                    auxi.Citation(c.text, c.attrib.get('label', None))
+                    for c in publication.xpath('cite') if c.text != '...'],
+                'series': auxi.first_or_none(
+                    auxi.Series(s.text, s.attrib.get('href', None))
+                    for s in publication.xpath('series'))
+            }
+            self.data = data
