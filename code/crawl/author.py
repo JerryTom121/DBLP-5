@@ -6,7 +6,8 @@ from lxml import etree
 
 from lazyAPIData import LazyAPIData
 from publication import Publication
-from utils import parameters as params
+from settings import parameters as params
+
 
 
 class Author(LazyAPIData):

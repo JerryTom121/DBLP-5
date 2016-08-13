@@ -2,7 +2,7 @@
 """Build the database for the crawler system."""
 
 from pymongo import MongoClient, ASCENDING
-from utils import parameters as params
+from settings import parameters as params
 
 
 def init_collection():

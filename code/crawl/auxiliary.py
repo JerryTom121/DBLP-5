@@ -4,7 +4,7 @@
 import random
 from collections import namedtuple
 
-from utils import parameters as params
+from settings import parameters as params
 
 Publisher = namedtuple('Publisher', ['name', 'href'])
 Series = namedtuple('Series', ['text', 'href'])
@@ -26,4 +26,4 @@ def get_fullname(o):
 
 def random_sleep():
     """decide a random time to sleep."""
-    return random.uniform(1, params.DOWNLOAD_DELAY)
+    return random.uniform(2, params.DOWNLOAD_DELAY)

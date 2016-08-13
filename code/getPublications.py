@@ -5,12 +5,12 @@ import time
 import requests
 from os.path import join
 
+import crawl.buildDatabase as builddb
+import crawl.auxiliary as auxi
 from crawlerAPI import CrawlerAPI
-from crawl import buildDatabase as builddb
-from crawl import auxiliary as auxi
-from utils import Logger
-from utils import parameters as params
-from utils import opfiles as op
+from utils.logger import Logger
+import settings.parameters as params
+import utils.opfiles as op
 
 
 class GetPublications(object):
@@ -19,7 +19,8 @@ class GetPublications(object):
 
     def __init__(self):
         """init."""
-        self.log = Logger.get_logger("get_publications")
+        super(GetPublications, self).__init__()
+        self.log = Logger.get_logger(auxi.get_fullname(self))
         self.api = CrawlerAPI()
 
     def read_list_to_download(self, path):
@@ -48,6 +49,7 @@ class GetPublications(object):
                            u=c.venue_url))
             total_publications = len(c.publications)
             for ind, publication in enumerate(c.publications):
+                self.log.debug("processing: {k}".format(k=publication.key))
                 if db.find({"key": publication.key}).count() > 0:
                     op.write_to_txt(publication.key + "\tExisted.\n",
                                     path_record, "a")
@@ -82,17 +84,15 @@ class GetPublications(object):
         path_list_to_crawl = join(path_code, "list_to_download")
         path_crawler_record = join(path_code, "list_of_downloaded")
         # init logger
-        log = Logger.get_logger('crawl_publication')
-        log.info("START THE CRAWLER...")
+        self.log.info("START THE CRAWLER...")
         # init mongodb
         authors, publications = builddb.init_collection()
-
         # get the venues to crawl.
         venues_to_crawl = self.read_list_to_download(path_list_to_crawl)
         # start the crawler
         for venue in venues_to_crawl:
             venue = venue.strip()
-            log.info("crawl the venue named {v}".format(v=venue))
+            self.log.info("crawl the venue named {v}".format(v=venue))
             crawled = self.crawl_venues(venue)
             self.parsing_crawled_publications(crawled, publications,
                                               path_crawler_record)

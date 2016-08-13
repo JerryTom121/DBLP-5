@@ -33,39 +33,44 @@ class Venues(LazyAPIData):
         self.acronym = venue['acronym']
         self.xml = None
         super(Venues, self).__init__(['publications'])
+        self.log = Logger.get_logger(auxi.get_fullname(self))
+
 
     def crawl_more_venue_urls(self):
         """using the venue url to get the exact/detailed urls."""
-        print("using a venue url to get more detailed venue urls.")
         url_basename = basename(self.venue_url)
+        self.log.info(
+            "using a {v}'s url to get more detailed venue urls.".format(
+                v=url_basename))
         resp = requests.get(self.venue_url)
         html = BS(resp.content, 'lxml')
-        html_data = html.findAll("div", {"class": "data"})
         urls = []
-        for data in html_data:
-            urls += [x['href']
-                     for x in data.findAll(href=True)
-                     if url_basename in x['href'] and
-                     url_basename + "/" + url_basename in x['href']]
-        return urls
+        urls += [x['href'] for x in html.findAll(href=True)
+                 if url_basename in x['href'] and
+                 url_basename + "/" + url_basename in x['href']]
+        return list(set(urls))
 
     def crawl_publication(self, url):
         """crawl the key information for a single publication."""
-        print("get the key information of {k}.".format(k=url))
-        resp = requests.get(url)
-        html = BS(resp.content, 'lxml')
-        html_data = html.findAll("li", {"class": "entry"})
-        publication_keys = [data['id'] for data in html_data]
+        self.log.debug("get the key of {k}.".format(k=url))
+        try:
+            resp = requests.get(url)
+            html = BS(resp.content, 'lxml')
+            html_data = html.findAll("li", {"class": "entry"})
+            publication_keys = [data['id'] for data in html_data]
+        except:
+            publication_keys = []
         return publication_keys
 
     def crawl_publications(self, venue_urls):
         """crawl the key information for a list of publications."""
-        print("get the publications' key information.")
+        self.log.info("start: get the keys of publications.")
         publications_urls = []
         for url in venue_urls:
             publications_urls += self.crawl_publication(url)
             time_to_sleep = auxi.random_sleep()
             time.sleep(time_to_sleep)
+        self.log.info("end: get the keys of publications.")
         return publications_urls
 
     def load_data(self):

@@ -9,7 +9,8 @@ class Logger:
     """docstring"""
 
     @staticmethod
-    def get_logger(name=None, level=logging.DEBUG):
+    def get_logger(name=None,
+                   level=logging.DEBUG):
         """define the name of logger."""
-        logging.config.fileConfig('utils/logging.conf')
+        logging.config.fileConfig('settings/logging.conf')
         return logging.getLogger(name)

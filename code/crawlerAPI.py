@@ -5,12 +5,13 @@ import requests
 from lxml import etree
 from optparse import OptionParser
 
-from crawl import Author
-from crawl import CoAuthor
-from crawl import Venues
-from crawl import Publication
-from utils import Logger
-from utils import parameters as params
+from crawl.author import Author
+from crawl.coauthor import CoAuthor
+from crawl.venues import Venues
+from crawl.publication import Publication
+import crawl.auxiliary as auxi
+from utils.logger import Logger
+import settings.parameters as params
 
 
 class CrawlerAPI(object):
@@ -19,7 +20,8 @@ class CrawlerAPI(object):
 
     def __init__(self):
         """init."""
-        self.log = Logger.get_logger("crawler_api")
+        super(CrawlerAPI, self).__init__()
+        self.log = Logger.get_logger(auxi.get_fullname(self))
 
     def crawl_author_assist(self, resp):
         """an assistant function to help the function 'crawl_author'."""

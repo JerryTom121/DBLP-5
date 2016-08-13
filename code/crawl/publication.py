@@ -3,7 +3,7 @@
 import requests
 from lxml import etree
 from lazyAPIData import LazyAPIData
-from utils import parameters as params
+from settings import parameters as params
 import auxiliary as auxi
 
 
