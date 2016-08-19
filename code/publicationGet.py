@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
-"""My crawler to automatically download the information."""
+"""My crawler to automatically download the publications' information."""
 
 import time
 import requests
 from os.path import join
 
 import crawl.buildDatabase as builddb
-import crawl.auxiliary as auxi
 from crawlerAPI import CrawlerAPI
 from utils.logger import Logger
-import settings.parameters as params
+from utils import auxiliary as auxi
 import utils.opfiles as op
+import settings.parameters as params
 
 
 class GetPublications(object):
@@ -81,8 +81,8 @@ class GetPublications(object):
     def start_crawler(self, path_code):
         """start my crawler."""
         # init pathes
-        path_list_to_crawl = join(path_code, "list_to_download")
-        path_crawler_record = join(path_code, "list_of_downloaded")
+        path_list_to_crawl = join(path_code, "publications_to_download")
+        path_crawler_record = join(path_code, "publications_of_downloaded")
         # init logger
         self.log.info("START THE CRAWLER...")
         # init mongodb
@@ -91,7 +91,6 @@ class GetPublications(object):
         venues_to_crawl = self.read_list_to_download(path_list_to_crawl)
         # start the crawler
         for venue in venues_to_crawl:
-            venue = venue.strip()
             self.log.info("crawl the venue named {v}".format(v=venue))
             crawled = self.crawl_venues(venue)
             self.parsing_crawled_publications(crawled, publications,

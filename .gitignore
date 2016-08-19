@@ -53,6 +53,7 @@ Thumbs.db
 ref/*
 runs/*
 *downloaded
+*authors_to_download
 
 # python file #
 ######################

@@ -6,6 +6,7 @@
 import os
 import time
 import json
+import pickle
 from logger import Logger
 
 log = Logger.get_logger("utils")
@@ -19,13 +20,25 @@ def name_without_extension(path):
 def read_txt(path):
     """read text file from path."""
     with open(path, "r") as f:
-        return f.readlines()
+        return f.read().splitlines()
 
 
 def read_json(path):
     """read json file from path."""
     with open(path, 'r') as f:
         return json.load(f)
+
+
+def write_pickle(data, path):
+    """dump file to dir."""
+    with open(path, 'wb') as handle:
+        pickle.dump(data, handle)
+
+
+def load_pickle(path):
+    """load data by pickle."""
+    with open(path, 'rb') as handle:
+        return pickle.load(handle)
 
 
 def write_to_txt(data, out_path, type="w"):

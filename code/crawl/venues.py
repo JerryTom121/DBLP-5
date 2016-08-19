@@ -7,9 +7,9 @@ from bs4 import BeautifulSoup as BS
 from os.path import basename
 
 from utils import Logger
+from utils import auxiliary as auxi
 from lazyAPIData import LazyAPIData
 from publication import Publication
-import auxiliary as auxi
 
 
 class Venues(LazyAPIData):

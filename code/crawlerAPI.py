@@ -9,7 +9,7 @@ from crawl.author import Author
 from crawl.coauthor import CoAuthor
 from crawl.venues import Venues
 from crawl.publication import Publication
-import crawl.auxiliary as auxi
+from utils import auxiliary as auxi
 from utils.logger import Logger
 import settings.parameters as params
 
@@ -29,6 +29,7 @@ class CrawlerAPI(object):
         root = etree.fromstring(resp.content)
         # print(etree.tostring(root, pretty_print=True))
         for urlpt in root.xpath('/authors/author/@urlpt'):
+            self.log.info("processing {v}".format(v=urlpt))
             parsed.append(Author(urlpt))
         return parsed
 

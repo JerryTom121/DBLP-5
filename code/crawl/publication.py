@@ -4,7 +4,7 @@ import requests
 from lxml import etree
 from lazyAPIData import LazyAPIData
 from settings import parameters as params
-import auxiliary as auxi
+from utils import auxiliary as auxi
 
 
 class Publication(LazyAPIData):
