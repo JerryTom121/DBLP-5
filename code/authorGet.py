@@ -41,49 +41,53 @@ class GetAuthors(object):
             self, crawled, db_authors, db_publications, path_record):
         """parsing the crawled authors."""
         for author in crawled:
-            self.log.debug("parsing {n}, its url={u}".format(n=author.name,
-                           u=author.urlpt))
-            if db_publications.find({"urlpt": author.urlpt}).count() > 0:
-                op.write_to_txt(author.name + "\t" +
-                                author.urlpt + "\tExisted-----------------.\n",
+            # first add a time delay
+            time_to_sleep = auxi.random_sleep()
+            time.sleep(time_to_sleep)
+            # start!
+            urlpt = author.urlpt
+            name = author.name
+            self.log.debug("parsing urlpt={u}".format(u=urlpt))
+            if db_authors.find({"urlpt": urlpt}).count() > 0:
+                op.write_to_txt(name + "\t" +
+                                urlpt + "\tExisted-----------------.\n",
                                 path_record, "a")
                 continue
             keys = []
             for ind, publication in enumerate(author.publications):
-                self.log.debug("processing: {k}".format(k=publication.key))
-                if len(publication.authors) == 0:
+                # start!
+                key = publication.key
+                self.log.debug("processing: {k}".format(k=key))
+                keys.append(key)
+                if db_publications.find({"key": key}).count() > 0:
+                    op.write_to_txt(key + "\tExisted.\n", path_record, "a")
                     continue
-                keys.append(publication.key)
-                if db_publications.find({"key": publication.key}).count() > 0:
-                    op.write_to_txt(publication.key + "\tExisted.\n",
-                                    path_record, "a")
+                elif len(publication.authors) == 0:
                     continue
-                # insert to database
-                self.insert_to_db({
-                    "key": publication.key,
-                    "acronym": publication.key.split('/')[-2],
-                    "url": params.DBLP_RECORDS_URL.format(key=publication.key),
-                    "title": publication.title,
-                    "year":  publication.year,
-                    "crossref": publication.crossref,
-                    "citations": publication.citations,
-                    "authors": publication.authors
-                    }, db_publications)
-                # add time delay to avoid the blocking.
-                time_to_sleep = auxi.random_sleep()
-                time.sleep(time_to_sleep)
+                else:
+                    # add time delay to avoid the blocking.
+                    time_to_sleep = auxi.random_sleep()
+                    time.sleep(time_to_sleep)
+                    op.write_to_txt(key + "\tAdded.\n", path_record, "a")
+                    # insert to database
+                    self.insert_to_db({
+                        "key": key,
+                        "acronym": key.split('/')[-2],
+                        "url": params.DBLP_RECORDS_URL.format(key=key),
+                        "title": publication.title,
+                        "year":  publication.year,
+                        "crossref": publication.crossref,
+                        "citations": publication.citations,
+                        "authors": publication.authors
+                        }, db_publications)
             # insert to database
             self.insert_to_db({
-                    "urlpt": author.urlpt,
-                    "name": author.name,
-                    "url": params.DBLP_RECORDS_URL.format(key=publication.key),
+                    "urlpt": urlpt,
+                    "name": name,
                     "publication_keys": keys
                 }, db_authors)
-            op.write_to_txt(author.name + "\t" + author.urlpt +
-                            "\tAdded-----------------.\n",
+            op.write_to_txt(name + "\t" + urlpt + "\tAdded----------------.\n",
                             path_record, "a")
-            time_to_sleep = auxi.random_sleep()
-            time.sleep(time_to_sleep)
 
     def start_crawler(self, path_root):
         """start my crawler."""
@@ -98,7 +102,10 @@ class GetAuthors(object):
         authors = op.load_pickle(path_list_to_crawl)
         # start the crawler
         for ind, author in enumerate(authors):
-            self.log.info("crawl the author named: {v}".format(v=author))
+            if db_authors.find({"name": author}).count() > 0:
+                op.write_to_txt(author + "\tExisted-----------------.\n",
+                                path_crawler_record, "a")
+                continue
             crawled = self.crawl_author(author + "$")
             self.parsing_crawled_authors(
                 crawled, db_authors, db_publications, path_crawler_record)

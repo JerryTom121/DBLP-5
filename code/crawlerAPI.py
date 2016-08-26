@@ -172,7 +172,7 @@ if __name__ == '__main__':
     parser.add_option("-a",
                       "--author",
                       dest="author",
-                      default="zhenyu wen",
+                      default="l/Li:Boyang",
                       type="string",
                       help="the person to search")
     parser.add_option("-v",

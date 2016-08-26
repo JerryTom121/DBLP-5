@@ -14,8 +14,7 @@ class ParsePublications(BasicParsing):
         self.log = Logger.get_logger(auxi.get_fullname(self))
         self.path_root = path_root
         self.init_path("publications.json")
-        self.want_we_want = ["acronym", "venue_name", "year",
-                             "key", "title", "authors"]
+        self.want_we_want = ["acronym", "year", "key", "title", "authors"]
 
     def extract(self, files, list_todownload):
         """extract useful information.
@@ -40,9 +39,12 @@ class ParsePublications(BasicParsing):
     def get_authors(self, files):
         """get a complete author list."""
         authors = []
-        self.log.info("get a complete author list.")
+        self.log.info("get a complete author list (only for first author).")
         for file in files:
-            authors += file[5]
+            try:
+                authors.append(file[4][0])
+            except:
+                pass
         unique_authors = set(authors)
         self.log.info("the number of unique authors {a}".format(
             a=len(unique_authors)))
